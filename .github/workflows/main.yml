@@ -9,6 +9,7 @@ env:
   AWS_REGION: ap-south-1
   ECR_REPO_FRONTEND: frontend
   ECR_REPO_BACKEND: backend
+  AWS_ACCOUNT_ID: 202583917032
   ECS_CLUSTER: my-ecs-cluster
   ECS_SERVICE_FRONTEND: frontend-service
   ECS_SERVICE_BACKEND: backend-service
@@ -19,8 +20,11 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to AWS
     runs-on: ubuntu-latest
+
+    env:
+      FRONTEND_IMAGE_URI: 202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest
+      BACKEND_IMAGE_URI: 202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest
 
     steps:
       - name: Checkout code
@@ -35,18 +39,15 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set image URIs
-        run: |
-          echo "FRONTEND_IMAGE_URI=202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest" >> $GITHUB_ENV
-          echo "BACKEND_IMAGE_URI=202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest" >> $GITHUB_ENV
-
       - name: Build and push frontend image
         run: |
+          echo "Building frontend as $FRONTEND_IMAGE_URI"
           docker build -t $FRONTEND_IMAGE_URI ./frontend
           docker push $FRONTEND_IMAGE_URI
 
       - name: Build and push backend image
         run: |
+          echo "Building backend as $BACKEND_IMAGE_URI"
           docker build -t $BACKEND_IMAGE_URI ./backend
           docker push $BACKEND_IMAGE_URI
 
