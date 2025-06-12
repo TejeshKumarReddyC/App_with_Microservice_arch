@@ -2,8 +2,7 @@ name: Deploy to Amazon ECS via OIDC
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   id-token: write
@@ -25,6 +24,15 @@ jobs:
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Print directory structure and show Dockerfiles
+        run: |
+          echo "Directory structure:"
+          ls -R
+          echo "Printing frontend Dockerfile:"
+          cat frontend/Dockerfile || echo "❌ Missing frontend Dockerfile"
+          echo "Printing backend Dockerfile:"
+          cat backend/Dockerfile || echo "❌ Missing backend Dockerfile"
 
       - name: Build and push frontend image
         run: |
