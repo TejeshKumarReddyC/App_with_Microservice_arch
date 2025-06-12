@@ -35,20 +35,19 @@ jobs:
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker images
+      - name: Set image URIs
         run: |
-          docker build -t $ECR_REPO_FRONTEND ./frontend
-          docker build -t $ECR_REPO_BACKEND ./backend
+          echo "FRONTEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_FRONTEND }}:latest" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_BACKEND }}:latest" >> $GITHUB_ENV
 
-      - name: Tag and push Docker images to ECR
+      - name: Build and push frontend image
         run: |
-          FRONTEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO_FRONTEND:latest
-          BACKEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO_BACKEND:latest
-
-          docker tag $ECR_REPO_FRONTEND $FRONTEND_IMAGE_URI
-          docker tag $ECR_REPO_BACKEND $BACKEND_IMAGE_URI
-
+          docker build -t $FRONTEND_IMAGE_URI ./frontend
           docker push $FRONTEND_IMAGE_URI
+
+      - name: Build and push backend image
+        run: |
+          docker build -t $BACKEND_IMAGE_URI ./backend
           docker push $BACKEND_IMAGE_URI
 
       - name: Deploy Frontend to ECS
