@@ -37,8 +37,8 @@ jobs:
 
       - name: Set image URIs
         run: |
-          echo "FRONTEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_FRONTEND }}:latest" >> $GITHUB_ENV
-          echo "BACKEND_IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_BACKEND }}:latest" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_URI=202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_URI=202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest" >> $GITHUB_ENV
 
       - name: Build and push frontend image
         run: |
