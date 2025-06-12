@@ -5,15 +5,6 @@ on:
     branches:
       - main
 
-env:
-  AWS_REGION: ap-south-1
-  ECR_REPO_FRONTEND: frontend
-  ECR_REPO_BACKEND: backend
-  AWS_ACCOUNT_ID: 202583917032
-  ECS_CLUSTER: my-ecs-cluster
-  ECS_SERVICE_FRONTEND: frontend-service
-  ECS_SERVICE_BACKEND: backend-service
-
 permissions:
   id-token: write
   contents: read
@@ -21,10 +12,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    env:
-      FRONTEND_IMAGE_URI: 202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest
-      BACKEND_IMAGE_URI: 202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest
 
     steps:
       - name: Checkout code
@@ -34,33 +21,33 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::202583917032:role/githubconn
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ap-south-1
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push frontend image
         run: |
-          echo "Building frontend as ${{ env.FRONTEND_IMAGE_URI }}"
-          docker build -t ${{ env.FRONTEND_IMAGE_URI }} ./frontend
-          docker push ${{ env.FRONTEND_IMAGE_URI }}
+          docker build -t 202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest ./frontend
+          docker push 202583917032.dkr.ecr.ap-south-1.amazonaws.com/frontend:latest
 
       - name: Build and push backend image
         run: |
-          echo "Building backend as ${{ env.BACKEND_IMAGE_URI }}"
-          docker build -t ${{ env.BACKEND_IMAGE_URI }} ./backend
-          docker push ${{ env.BACKEND_IMAGE_URI }}
+          docker build -t 202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest ./backend
+          docker push 202583917032.dkr.ecr.ap-south-1.amazonaws.com/backend:latest
 
       - name: Deploy Frontend to ECS
         run: |
           aws ecs update-service \
-            --cluster $ECS_CLUSTER \
-            --service $ECS_SERVICE_FRONTEND \
-            --force-new-deployment
+            --cluster my-ecs-cluster \
+            --service frontend-service \
+            --force-new-deployment \
+            --region ap-south-1
 
       - name: Deploy Backend to ECS
         run: |
           aws ecs update-service \
-            --cluster $ECS_CLUSTER \
-            --service $ECS_SERVICE_BACKEND \
-            --force-new-deployment
+            --cluster my-ecs-cluster \
+            --service backend-service \
+            --force-new-deployment \
+            --region ap-south-1
