@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template_string
-import request
+import requests
 
 app = Flask(__name__)
 BACKEND_URL = "http://backend:5000/messages"
