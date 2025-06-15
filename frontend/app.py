@@ -1,16 +1,34 @@
-from flask import Flask
+from flask import Flask, render_template_string
 import requests
+import os
 
 app = Flask(__name__)
-BACKEND_URL = "http://backend:5000/api"
+
+# Backend API URL (internal ECS service DNS or environment variable)
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000")
 
 @app.route("/")
 def index():
     try:
-        response = requests.get(BACKEND_URL)
-        return f"<h1>Frontend</h1><p>Backend says: {response.text}</p>"
+        response = requests.get(f"{BACKEND_URL}/users")
+        users = response.json()
     except Exception as e:
-        return f"<h1>Frontend</h1><p>Error contacting backend: {e}</p>", 500
+        return f"<h2>Error connecting to backend: {e}</h2>"
+
+    # Render user list in simple HTML
+    html = """
+    <h1>Users List</h1>
+    {% if users %}
+        <ul>
+        {% for user in users %}
+            <li>{{ user.id }} - {{ user.name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No users found.</p>
+    {% endif %}
+    """
+    return render_template_string(html, users=users)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
