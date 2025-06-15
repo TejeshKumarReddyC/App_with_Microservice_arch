@@ -1,15 +1,16 @@
-from flask import Flask, jsonify
+from flask import Flask
 import requests
 
 app = Flask(__name__)
+BACKEND_URL = "http://backend:5000/api"
 
 @app.route("/")
-def home():
+def index():
     try:
-        response = requests.get("http://backend-service:5000/api", timeout=3)
-        return f"Frontend → Backend: {response.json()['message']}"
+        response = requests.get(BACKEND_URL)
+        return f"<h1>Frontend</h1><p>Backend says: {response.text}</p>"
     except Exception as e:
-        return f"Error: {e}", 500
+        return f"<h1>Frontend</h1><p>Error contacting backend: {e}</p>", 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
