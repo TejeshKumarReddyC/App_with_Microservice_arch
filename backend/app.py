@@ -1,27 +1,40 @@
-from flask import Flask
-import psycopg2
+from flask import Flask, jsonify
+import pg8000
 import os
 
 app = Flask(__name__)
 
-@app.route("/api")
-def backend_api():
+# Read DB connection info from environment variables
+DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_PORT = int(os.environ.get("DB_PORT", "5432"))
+DB_NAME = os.environ.get("DB_NAME", "mydb")
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "password")
+
+@app.route("/")
+def index():
+    return jsonify({"message": "Backend is running!"})
+
+@app.route("/users")
+def get_users():
     try:
-        conn = psycopg2.connect(
-            dbname=os.environ['DB_NAME'],
-            user=os.environ['DB_USER'],
-            password=os.environ['DB_PASSWORD'],
-            host=os.environ['DB_HOST'],
-            port=os.environ.get('DB_PORT', 5432)
+        conn = pg8000.connect(
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME
         )
-        cur = conn.cursor()
-        cur.execute("SELECT 'Hello from RDS!'")
-        result = cur.fetchone()
-        cur.close()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users;")
+        rows = cursor.fetchall()
         conn.close()
-        return result[0]
+
+        users = [{"id": r[0], "name": r[1]} for r in rows]
+        return jsonify(users)
+
     except Exception as e:
-        return f"Error: {e}", 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
