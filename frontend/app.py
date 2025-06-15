@@ -2,7 +2,7 @@ from flask import Flask, request, render_template_string
 import requests
 
 app = Flask(__name__)
-BACKEND_URL = "http://backend:5000/messages"
+BACKEND_URL = "http://localhost:5000/messages"
 
 TEMPLATE = '''
 <form method="POST">
