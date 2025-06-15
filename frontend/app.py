@@ -10,7 +10,7 @@ BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000")
 @app.route("/")
 def index():
     try:
-        response = requests.get(f"{BACKEND_URL}/users")
+        response = requests.get(f"{BACKEND_URL}/")
         users = response.json()
     except Exception as e:
         return f"<h2>Error connecting to backend: {e}</h2>"
