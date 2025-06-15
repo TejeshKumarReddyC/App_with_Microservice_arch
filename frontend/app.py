@@ -1,23 +1,15 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, jsonify
 import requests
 
 app = Flask(__name__)
-BACKEND_URL = "http://localhost:5000/messages"
 
-TEMPLATE = '''
-<form method="POST">
-    <input name="msg"><input type="submit">
-</form>
-<ul>{% for msg in messages %}<li>{{ msg }}</li>{% endfor %}</ul>
-'''
+@app.route("/")
+def home():
+    try:
+        response = requests.get("http://backend-service:5000/api", timeout=3)
+        return f"Frontend → Backend: {response.json()['message']}"
+    except Exception as e:
+        return f"Error: {e}", 500
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        requests.post(BACKEND_URL, json={"content": request.form["msg"]})
-    res = requests.get(BACKEND_URL)
-    return render_template_string(TEMPLATE, messages=res.json())
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
