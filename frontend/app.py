@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # Backend API URL (internal ECS service DNS or environment variable)
-BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:5000")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 
 @app.route("/")
 def index():
