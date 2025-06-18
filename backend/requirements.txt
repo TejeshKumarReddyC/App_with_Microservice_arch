@@ -1,3 +1,2 @@
-Flask
-pymysql
-pg8000
+flask
+mysql-connector-python
