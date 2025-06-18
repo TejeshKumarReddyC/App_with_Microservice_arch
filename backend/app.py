@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Load DB credentials from Secrets Manager
 def get_db_creds():
-    secret_name = os.getenv("DB_SECRET_NAME", "rds/mysql/backend")
+    secret_name = os.getenv("DB_SECRET_NAME", "myapp_secret")
     region_name = os.getenv("AWS_REGION", "ap-south-1")
 
     client = boto3.client('secretsmanager', region_name=region_name)
