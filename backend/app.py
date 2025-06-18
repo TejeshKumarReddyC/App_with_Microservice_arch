@@ -1,3 +1,4 @@
+#Backend code
 import os
 import mysql.connector
 from flask import Flask, jsonify, request
