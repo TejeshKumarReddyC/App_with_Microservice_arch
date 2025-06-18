@@ -10,7 +10,10 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 def index():
     try:
         print(f"Connecting to: {BACKEND_URL}")
-        response = requests.get(f"{BACKEND_URL}/users")
+        response = requests.get(f"{BACKEND_URL}/")
         return jsonify(response.json())
     except Exception as e:
         return f"Error connecting to backend: {e}", 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80)
