@@ -8,4 +8,7 @@
 6. Cloudwatch
 
 ### Description
-It consists of a python application that has frontend & backend containerised into two containers in the aws ecs, and automated the deployment with Github actions.   
+It consists of a python application that has frontend & backend containerized into two containers in the aws ecs, and automated the deployment with Github actions.   
+
+### Workflow
+Local repo --> Github --> Github Actions --> ECR --> ECS --> RDS
